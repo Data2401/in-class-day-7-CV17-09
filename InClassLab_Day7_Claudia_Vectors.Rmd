@@ -1,0 +1,269 @@
+---
+title: "In Class Lab"
+author: "Claudia Dominguez"
+date: "DATA 2401"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## In Class Exercises
+
+### Set 1 
+
+1. Use the colon operator : to create a vector `n` of numbers from 10:49
+2. Use the `length()` function to get the number of elements in `n`
+3. Add 1 to each element in `n` and print the result
+4. Create a vector `m` that contains the numbers 10 to 1 (in that order), in two different ways, neither of which is just typing "10, 9 , 8 ...".  Hint: use one of the helper functions we learned.
+5. Subtract `m` FROM `n`. Note the recycling!
+
+```{r}
+# 1 
+n <- 10:49
+
+# 2 
+length_n <- length(n)
+cat("The length of n is:", length_n, "\n")
+
+# 3
+n_plus_1 <- n + 1
+cat("n plus 1 is:", n_plus_1, "\n")
+
+# 4
+m <- 10:1
+m_alternative <- rev(seq(1, 10))
+
+cat("Vector m is:", m, "\n")
+cat("Alternative m is:", m_alternative, "\n")
+
+result <- n - m
+cat("Result of subtracting m from n:", result, "\n")
+
+
+```
+### Set 2 
+
+1. Use the `seq()` function to produce a range of numbers from -5 to 10 in `0.1` increments. Store it in a variable `x_range`
+2. Create a vector `sin_wave` by calling the `sin()` function on each element in `x_range`.
+3. Use the `plot()` function to plot your "wave"!
+     + the x vector goes in the first argument, the y vector goes in the second argument
+     + You'll need to add the argument `type = "l"` for a line. NOTE: That is a lower case "L", not a 1. 
+```{r}
+# 1
+x_range <- seq(-5, 10, by = 0.1)
+
+# 2
+sin_wave <- sin(x_range)
+
+# 3
+plot(x_range, sin_wave, type = "l", main = "Sine Wave", xlab = "x_range", ylab = "sin(x)", col = "green", lwd = 2)
+
+
+```
+### Set 3 
+
+1. Use `:` to make a vector of the integers from 40 to 50 called `first_nums`
+2. Use `seq()` to make a vector of the integers from 51 to 60 called `next_nums`
+3. Combine them using `c()`
+4. Use indexing to access the 7th number in your combined vector
+5. Use indexing to access the 5th to the 8th numbers in your combined vector
+6. Use indexing to create a new vector that contains the first 3 elements and last 3 elements of your combined vector. 
+7. Bonus/extra: do the above in a way that would work no matter how long the vector is (as long as it's longer than 2 elements)
+```{r}
+# 1
+first_nums <- 40:50
+
+# 2
+next_nums <- seq(51, 60)
+
+# 3
+combined_nums <- c(first_nums, next_nums)
+cat("Combined vector:", combined_nums, "\n")
+
+# 4
+seventh_num <- combined_nums[7]
+cat("The 7th number is:", seventh_num, "\n")
+
+# 5
+fifth_to_eighth <- combined_nums[5:8]
+cat("The 5th to 8th numbers are:", fifth_to_eighth, "\n")
+
+# 6
+new_vector <- c(combined_nums[1:3], combined_nums[(length(combined_nums)-2):length(combined_nums)])
+cat("New vector (first 3 and last 3 elements):", new_vector, "\n")
+
+# 7
+if (length(combined_nums) > 2) {
+  generalized_vector <- c(combined_nums[1:3], combined_nums[(length(combined_nums)-2):length(combined_nums)])
+  cat("Generalized vector:", generalized_vector, "\n")
+} else {
+  cat("Vector too short for the operation.\n")
+}
+
+```
+
+## In Class Activity
+
+1. Write a function to simulate rolling a 6-sided die and returns the result.
+
+```{r}
+roll_die <- function() {
+  sample(1:6, 1)
+}
+result <- roll_die()
+cat("You rolled a", result, ".\n")
+
+```
+1. Write a function to simulate rolling 2 6-sided dice that returns the sum of the rolls. 
+
+```{r}
+roll_two_dice <- function() {
+  die1 <- sample(1:6, 1)
+  die2 <- sample(1:6, 1)
+  return(die1 + die2)
+}
+result <- roll_two_dice()
+cat("The sum of the two dice rolls is", result, ".\n")
+
+
+```
+
+
+1. Write a function that takes two people name's as strings, simulates rolling a 6-sided die for each of the names, then returns the name of the person with the higher roll. The function should reroll once on a tie, but if there is a second tie, it should return "draw". 
+
+```{r}
+roll_die <- function() {
+  sample(1:6, 1)
+}
+
+roll_and_compare <- function(name1, name2) {
+  roll1 <- roll_die()
+  roll2 <- roll_die()
+  
+  cat(name1, "rolled:", roll1, "\n")
+  cat(name2, "rolled:", roll2, "\n")
+  
+  if (roll1 > roll2) {
+    return(name1)
+  } else if (roll2 > roll1) {
+    return(name2)
+  } else {
+    cat("It's a tie! Rerolling...\n")
+    roll1 <- roll_die()
+    roll2 <- roll_die()
+    
+    cat(name1, "rolled:", roll1, "on the reroll\n")
+    cat(name2, "rolled:", roll2, "on the reroll\n")
+    
+    if (roll1 > roll2) {
+      return(name1)
+    } else if (roll2 > roll1) {
+      return(name2)
+    } else {
+      return("draw")
+    }
+  }
+}
+winner <- roll_and_compare("Diana", "Luke")
+cat("The winner is:", winner, "\n")
+
+
+```
+
+
+2. Write a second function (you may start by modifying the first one) that takes two names as strings, simulates both of them rolling die 15 times, and returns the name of the person who "won" more rolls. Don't reroll ties this time, but don't count them as "wins". 
+
+```{r}
+roll_die <- function() {
+  sample(1:6, 1)
+}
+
+roll_15_times <- function(name1, name2) {
+  wins_name1 <- 0
+  wins_name2 <- 0
+  
+  for (i in 1:15) {
+    roll1 <- roll_die()
+    roll2 <- roll_die()
+    
+    cat("Round", i, ":", name1, "rolled", roll1, "|", name2, "rolled", roll2, "\n")
+    
+    if (roll1 > roll2) {
+      wins_name1 <- wins_name1 + 1
+    } else if (roll2 > roll1) {
+      wins_name2 <- wins_name2 + 1
+    } 
+  }
+  
+  cat(name1, "won", wins_name1, "times.\n")
+  cat(name2, "won", wins_name2, "times.\n")
+  
+  if (wins_name1 > wins_name2) {
+    return(name1)
+  } else if (wins_name2 > wins_name1) {
+    return(name2)
+  } else {
+    return("draw")
+  }
+}
+winner <- roll_15_times("Diana", "Luke")
+cat("The overall winner is:", winner, "\n")
+
+
+
+
+```
+
+
+3. Modify your function from (2) so that the person in the first argument has a die that is weighted to get higher numbers more often (you may decide the actual percentage change). Run the function ten or so times. Does the second person ever win?
+
+```{r}
+roll_weighted_die <- function() {
+  sample(1:6, 1, prob = c(0.05, 0.05, 0.1, 0.25, 0.25, 0.3))
+}
+
+roll_fair_die <- function() {
+  sample(1:6, 1)
+}
+
+roll_15_times_weighted <- function(name1, name2) {
+  wins_name1 <- 0
+  wins_name2 <- 0
+  
+  for (i in 1:15) {
+    roll1 <- roll_weighted_die()
+    roll2 <- roll_fair_die()
+    
+    cat("Round", i, ":", name1, "rolled", roll1, "|", name2, "rolled", roll2, "\n")
+    
+    if (roll1 > roll2) {
+      wins_name1 <- wins_name1 + 1
+    } else if (roll2 > roll1) {
+      wins_name2 <- wins_name2 + 1
+    }
+  }
+  
+  cat(name1, "won", wins_name1, "times.\n")
+  cat(name2, "won", wins_name2, "times.\n")
+  
+  if (wins_name1 > wins_name2) {
+    return(name1)
+  } else if (wins_name2 > wins_name1) {
+    return(name2)
+  } else {
+    return("draw")
+  }
+}
+set.seed(123)  
+for (i in 1:10) {
+  cat("Game", i, ":\n")
+  winner <- roll_15_times_weighted("Diana", "Luke")
+  cat("The overall winner is:", winner, "\n\n")
+}
+
+
+
+```
+
